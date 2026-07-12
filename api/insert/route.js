@@ -1,8 +1,18 @@
 import connectDB from '../../db/db.js';
 import product from '../../models/schema.js';
 import { GoogleGenAI } from '@google/genai';
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+function getApiKey() {
+    return process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+}
+
 async function getEmbedding(text) {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        throw new Error('Missing GOOGLE_API_KEY / GEMINI_API_KEY');
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.embedContent({
         model: 'text-embedding-004',
         contents: text,

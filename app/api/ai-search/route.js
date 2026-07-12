@@ -3,11 +3,23 @@ import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import connectDB from "@/db/db";
 import Product from "@/models/schema";
 
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-3.5-flash",
-  temperature: 0.7,
-  apiKey: process.env.GOOGLE_API_KEY,
-});
+function getApiKey() {
+  return process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+}
+
+function getModel() {
+  const apiKey = getApiKey();
+
+  if (!apiKey) {
+    throw new Error("Missing GOOGLE_API_KEY / GEMINI_API_KEY");
+  }
+
+  return new ChatGoogleGenerativeAI({
+    model: "gemini-3.5-flash",
+    temperature: 0.7,
+    apiKey,
+  });
+}
 
 export async function POST(req) {
   try {
@@ -16,6 +28,7 @@ export async function POST(req) {
       return Response.json({ products: [] }, { status: 200 });
     }
 
+    const model = getModel();
     await connectDB();
    
     const messages = [

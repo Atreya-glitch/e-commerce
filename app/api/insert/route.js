@@ -2,9 +2,22 @@ import connectDB from '../../../db/db.js';
 import Product from '../../../models/schema.js';
 import { GoogleGenAI } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+function getApiKey() {
+  return process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+}
+
+function getAiClient() {
+  const apiKey = getApiKey();
+
+  if (!apiKey) {
+    throw new Error('Missing GOOGLE_API_KEY / GEMINI_API_KEY');
+  }
+
+  return new GoogleGenAI({ apiKey });
+}
 
 async function getEmbedding(text) {
+  const ai = getAiClient();
   const response = await ai.models.embedContent({
     model: 'text-embedding-004',
     contents: text,
@@ -60,6 +73,11 @@ const seedProducts = [
 
 export async function GET() {
   try {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      return Response.json({ message: 'Missing GOOGLE_API_KEY / GEMINI_API_KEY' }, { status: 500 });
+    }
+
     await connectDB();
     await Product.deleteMany({});
 
