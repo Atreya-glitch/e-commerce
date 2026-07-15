@@ -57,7 +57,7 @@ export default function CartPage() {
               >
                 <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-stone-900 border border-white/10">
                   <Image
-                    src={item.image || "https://picsum.photos/seed/product/200/200"}
+                    src={item.image || `https://picsum.photos/seed/${encodeURIComponent(item.title)}/200/200`}
                     alt={item.title}
                     fill
                     sizes="96px"

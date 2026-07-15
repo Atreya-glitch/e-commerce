@@ -159,7 +159,7 @@ export default function ProductsPage() {
               >
                 <div className="relative aspect-square overflow-hidden bg-stone-900">
                   <Image
-                    src={product.image || "https://picsum.photos/seed/product/600/600"}
+                    src={product.image || `https://picsum.photos/seed/${encodeURIComponent(product.title)}/600/600`}
                     alt={product.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
